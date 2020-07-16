@@ -17,14 +17,14 @@ import { fuseConfig } from 'app/fuse-config';
 
 import { AppComponent } from 'app/app.component';
 import { LayoutModule } from 'app/layout/layout.module';
-import { SampleModule } from 'app/main/sample/sample.module';
-import { DemoComponent } from './main/demo/demo.component';
+import { AppStoreModule } from 'app/store/store.module';
+import { FakeDbService } from './fake-db/fake-db.service';
+import { InMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { DemoModule } from './main/demo/demo.module';
-
 const appRoutes: Routes = [
     {
-        path      : '**',
-        redirectTo: 'demo'
+        path        : 'apps',
+        loadChildren: () => import('./main/apps/apps.module').then(m => m.AppsModule)
     }
 ];
 
@@ -39,6 +39,10 @@ const appRoutes: Routes = [
         RouterModule.forRoot(appRoutes),
 
         TranslateModule.forRoot(),
+        InMemoryWebApiModule.forRoot(FakeDbService, {
+            delay             : 0,
+            passThruUnknownUrl: true
+        }),
 
         // Material moment date module
         MatMomentDateModule,
@@ -56,7 +60,7 @@ const appRoutes: Routes = [
 
         // App modules
         LayoutModule,
-        SampleModule,
+        AppStoreModule,
         DemoModule
     ],
     bootstrap   : [

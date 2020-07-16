@@ -10,7 +10,8 @@ export const locale = {
             'DEMO'        : {
                 'TITLE': 'Demo',
                 'BADGE': '25'
-            }
+            },
+            'ECOMMERCE'   : 'E-Commerce',
         }
     }
 };

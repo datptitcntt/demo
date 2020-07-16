@@ -33,7 +33,30 @@ export const navigation: FuseNavigation[] = [
                     bg       : '#F44336',
                     fg       : '#FFFFFF'
                 }
-            }
+            },
+            {
+                id       : 'e-commerce',
+                title    : 'E-Commerce',
+                translate: 'NAV.ECOMMERCE',
+                type     : 'collapsable',
+                icon     : 'shopping_cart',
+                children : [
+                    {
+                        id        : 'products',
+                        title     : 'Products',
+                        type      : 'item',
+                        url       : '/apps/e-commerce/products',
+                        exactMatch: true
+                    },
+                    {
+                        id        : 'productDetail',
+                        title     : 'Product Detail',
+                        type      : 'item',
+                        url       : '/apps/e-commerce/products/1/printed-dress',
+                        // exactMatch: true
+                    }
+                ]
+            },
         ]
     }
 ];
