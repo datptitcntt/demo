@@ -10,6 +10,11 @@ import { FuseUtils } from '@fuse/utils';
 
 import { EcommerceProductsService } from 'app/main/apps/e-commerce/products/products.service';
 import { takeUntil } from 'rxjs/internal/operators';
+import { Product } from '../product/product.model';
+import { Store, select } from '@ngrx/store';
+import { IAppState } from 'app/store/state/app.state';
+import { selectProductList } from 'app/store/selectors/product.selector';
+import { GetProducts } from 'app/store/actions/product.actions';
 
 @Component({
     selector     : 'e-commerce-products',
@@ -34,25 +39,27 @@ export class EcommerceProductsComponent implements OnInit
 
     // Private
     private _unsubscribeAll: Subject<any>;
-
+    private data : Product[];
+    
     constructor(
-        private _ecommerceProductsService: EcommerceProductsService
+        private _store: Store<IAppState>
     )
     {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
     }
-
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
 
-    /**
-     * On init
-     */
-    ngOnInit(): void
-    {
-        this.dataSource = new FilesDataSource(this._ecommerceProductsService, this.paginator, this.sort);
+    
+    ngOnInit() {
+        this._store.dispatch(new GetProducts());
+        this._store.pipe(select(selectProductList)).subscribe((data:Product[]) => {
+          this.data = data
+        })
+       
+        this.dataSource = new FilesDataSource(this.data, this.paginator, this.sort);
 
         fromEvent(this.filter.nativeElement, 'keyup')
             .pipe(
@@ -76,22 +83,16 @@ export class FilesDataSource extends DataSource<any>
     private _filterChange = new BehaviorSubject('');
     private _filteredDataChange = new BehaviorSubject('');
 
-    /**
-     * Constructor
-     *
-     * @param {EcommerceProductsService} _ecommerceProductsService
-     * @param {MatPaginator} _matPaginator
-     * @param {MatSort} _matSort
-     */
+    
     constructor(
-        private _ecommerceProductsService: EcommerceProductsService,
+        private _dataSource: Product[],
         private _matPaginator: MatPaginator,
         private _matSort: MatSort
     )
     {
         super();
 
-        this.filteredData = this._ecommerceProductsService.products;
+        this.filteredData = this._dataSource;
     }
 
     /**
@@ -102,7 +103,7 @@ export class FilesDataSource extends DataSource<any>
     connect(): Observable<any[]>
     {
         const displayDataChanges = [
-            this._ecommerceProductsService.onProductsChanged,
+            this._dataSource,
             this._matPaginator.page,
             this._filterChange,
             this._matSort.sortChange
@@ -111,7 +112,7 @@ export class FilesDataSource extends DataSource<any>
         return merge(...displayDataChanges)
             .pipe(
                 map(() => {
-                        let data = this._ecommerceProductsService.products.slice();
+                        let data = this._dataSource.slice();
 
                         data = this.filterData(data);
 

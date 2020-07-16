@@ -44,12 +44,12 @@
                 <span>ADD</span>
             </button>
 
-            <button mat-raised-button
+            <!-- <button mat-raised-button
                     class="save-product-button"
                     [disabled]="productForm.invalid || productForm.pristine"
                     *ngIf="pageType ==='edit'" (click)="saveProduct()">
                 <span>SAVE</span>
-            </button>
+            </button> -->
         </div>
         <!-- / HEADER -->
 
@@ -96,9 +96,9 @@
                                             <mat-icon matChipRemove>cancel</mat-icon>
                                         </mat-chip>
 
-                                        <input [matChipInputFor]="categoryList"
+                                        <!-- <input [matChipInputFor]="categoryList"
                                                [matChipInputAddOnBlur]="true"
-                                               (matChipInputTokenEnd)="product.addCategory($event)"/>
+                                               (matChipInputTokenEnd)="product.addCategory($event)"/> -->
 
                                     </mat-chip-list>
 
@@ -116,9 +116,9 @@
                                             <mat-icon matChipRemove>cancel</mat-icon>
                                         </mat-chip>
 
-                                        <input [matChipInputFor]="tagList"
+                                        <!-- <input [matChipInputFor]="tagList"
                                                [matChipInputAddOnBlur]="true"
-                                               (matChipInputTokenEnd)="product.addTag($event)"/>
+                                               (matChipInputTokenEnd)="product.addTag($event)"/> -->
 
                                     </mat-chip-list>
 

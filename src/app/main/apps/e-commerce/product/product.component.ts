@@ -10,6 +10,11 @@ import { FuseUtils } from '@fuse/utils';
 
 import { Product } from 'app/main/apps/e-commerce/product/product.model';
 import { EcommerceProductService } from 'app/main/apps/e-commerce/product/product.service';
+import { Store, select } from '@ngrx/store';
+import { IAppState } from 'app/store/state/app.state';
+import { GetProduct } from 'app/store/actions/product.actions';
+import { selectedProduct } from 'app/store/selectors/product.selector';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector     : 'e-commerce-product',
@@ -39,7 +44,9 @@ export class EcommerceProductComponent implements OnInit, OnDestroy
         private _ecommerceProductService: EcommerceProductService,
         private _formBuilder: FormBuilder,
         private _location: Location,
-        private _matSnackBar: MatSnackBar
+        private _matSnackBar: MatSnackBar,
+        private _store: Store<IAppState>,
+        private _route: ActivatedRoute
     )
     {
         // Set the default
@@ -58,24 +65,22 @@ export class EcommerceProductComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
-        // Subscribe to update product on changes
-        this._ecommerceProductService.onProductChanged
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(product => {
+        this._store.dispatch(new GetProduct(this._route.snapshot.params.id));
+        this._store.pipe(select(selectedProduct)).subscribe((product:Product) => {
+            if ( product )
+            {
+                this.product = new Product(product);
+                this.pageType = 'edit';
+            }
+            else
+            {
+                this.pageType = 'new';
+                this.product = new Product();
+            }
 
-                if ( product )
-                {
-                    this.product = new Product(product);
-                    this.pageType = 'edit';
-                }
-                else
-                {
-                    this.pageType = 'new';
-                    this.product = new Product();
-                }
-
-                this.productForm = this.createProductForm();
-            });
+            this.productForm = this.createProductForm();
+        })
+        
     }
 
     /**
@@ -120,28 +125,6 @@ export class EcommerceProductComponent implements OnInit, OnDestroy
             extraShippingFee: [this.product.extraShippingFee],
             active          : [this.product.active]
         });
-    }
-
-    /**
-     * Save product
-     */
-    saveProduct(): void
-    {
-        const data = this.productForm.getRawValue();
-        data.handle = FuseUtils.handleize(data.name);
-
-        this._ecommerceProductService.saveProduct(data)
-            .then(() => {
-
-                // Trigger the subscription with new data
-                this._ecommerceProductService.onProductChanged.next(data);
-
-                // Show the success message
-                this._matSnackBar.open('Product saved', 'OK', {
-                    verticalPosition: 'top',
-                    duration        : 2000
-                });
-            });
     }
 
     /**

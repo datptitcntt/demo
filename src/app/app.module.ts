@@ -17,10 +17,11 @@ import { fuseConfig } from 'app/fuse-config';
 
 import { AppComponent } from 'app/app.component';
 import { LayoutModule } from 'app/layout/layout.module';
-import { AppStoreModule } from 'app/store/store.module';
 import { FakeDbService } from './fake-db/fake-db.service';
 import { InMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { DemoModule } from './main/demo/demo.module';
+import { sample } from 'lodash';
+import { SampleModule } from './main/sample/sample.module';
 const appRoutes: Routes = [
     {
         path        : 'apps',
@@ -39,10 +40,10 @@ const appRoutes: Routes = [
         RouterModule.forRoot(appRoutes),
 
         TranslateModule.forRoot(),
-        InMemoryWebApiModule.forRoot(FakeDbService, {
-            delay             : 0,
-            passThruUnknownUrl: true
-        }),
+        // InMemoryWebApiModule.forRoot(FakeDbService, {
+        //     delay             : 0,
+        //     passThruUnknownUrl: true
+        // }),
 
         // Material moment date module
         MatMomentDateModule,
@@ -60,8 +61,9 @@ const appRoutes: Routes = [
 
         // App modules
         LayoutModule,
-        AppStoreModule,
-        DemoModule
+        // AppStoreModule,
+        DemoModule,
+        SampleModule
     ],
     bootstrap   : [
         AppComponent

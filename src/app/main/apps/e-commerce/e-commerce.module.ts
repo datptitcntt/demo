@@ -23,28 +23,26 @@ import { EcommerceProductsComponent } from 'app/main/apps/e-commerce/products/pr
 import { EcommerceProductsService } from 'app/main/apps/e-commerce/products/products.service';
 import { EcommerceProductComponent } from 'app/main/apps/e-commerce/product/product.component';
 import { EcommerceProductService } from 'app/main/apps/e-commerce/product/product.service';
+import { StoreModule } from '@ngrx/store';
+import { appReducers } from 'app/store/reducers/app.reducers';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { ProductEffects } from 'app/store/effects/product.effects';
 
 const routes: Routes = [
     {
         path     : 'products',
-        component: EcommerceProductsComponent,
-        resolve  : {
-            data: EcommerceProductsService
-        }
+        component: EcommerceProductsComponent
+        
     },
     {
         path     : 'products/:id',
-        component: EcommerceProductComponent,
-        resolve  : {
-            data: EcommerceProductService
-        }
+        component: EcommerceProductComponent
+        
     },
     {
         path     : 'products/:id/:handle',
-        component: EcommerceProductComponent,
-        resolve  : {
-            data: EcommerceProductService
-        }
+        component: EcommerceProductComponent
     }
 ];
 
@@ -76,7 +74,10 @@ const routes: Routes = [
         }),
 
         FuseSharedModule,
-        FuseWidgetModule
+        FuseWidgetModule,
+        StoreModule.forRoot(appReducers),
+        EffectsModule.forRoot([ProductEffects]),
+        StoreRouterConnectingModule.forRoot({ stateKey: 'router' }),
     ],
     providers   : [
         EcommerceProductsService,
